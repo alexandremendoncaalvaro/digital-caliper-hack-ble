@@ -2,102 +2,100 @@
 
 void Caliper::begin()
 {
-    pinMode(PIN_DATA, INPUT);
-    pinMode(PIN_CLOCK, INPUT);
+	pinMode(PIN_DATA, INPUT);
+	pinMode(PIN_CLOCK, INPUT);
 }
 
 void Caliper::waitForClockSignal(int signal)
 {
-    while (digitalRead(PIN_CLOCK) == signal)
-    {
-    }
+	while (digitalRead(PIN_CLOCK) == signal)
+	{
+	}
 }
 
 unsigned long Caliper::getReadPulseTime()
 {
-    waitForClockSignal(LOW);
-    auto time_now = micros();
-    waitForClockSignal(HIGH);
-    return micros() - time_now;
+	waitForClockSignal(LOW);
+	auto time_now = micros();
+	waitForClockSignal(HIGH);
+	return micros() - time_now;
 }
 
 void Caliper::readBitArray(int bitArray[])
 {
-    int bitIndex = 0;
-    bitArray[bitIndex] = digitalRead(PIN_DATA);
+	int bitIndex = 0;
+	bitArray[bitIndex] = digitalRead(PIN_DATA);
 
-    waitForClockSignal(HIGH);
-    for (bitIndex = 1; bitIndex <= 24; bitIndex++)
-    {
-        waitForClockSignal(LOW);
-        bitArray[bitIndex] = digitalRead(PIN_DATA);
-        waitForClockSignal(HIGH);
-    }
+	waitForClockSignal(HIGH);
+	for (bitIndex = 1; bitIndex <= 24; bitIndex++)
+	{
+		waitForClockSignal(LOW);
+		bitArray[bitIndex] = digitalRead(PIN_DATA);
+		waitForClockSignal(HIGH);
+	}
 }
 
 float Caliper::convertBinaryToDecimal(int bitArray[])
 {
-    float value = 0.0;
-    for (int bitIndex = 1; bitIndex <= 20; bitIndex++)
-    {
-        value = value + (pow(2, bitIndex - 1) * bitArray[bitIndex]);
-    }
-    return value;
+	float value = 0.0;
+	for (int bitIndex = 1; bitIndex <= 20; bitIndex++)
+	{
+		value = value + (pow(2, bitIndex - 1) * bitArray[bitIndex]);
+	}
+	return value;
 }
 
-string Caliper::convertFloatToStringWithUnit(float value, string unitOfMeasure){
-    char buff[10];
-    dtostrf(value, 4, 6, buff);
-
-    string result = buff;
-    result += unitOfMeasure;
-    return result;
+char * Caliper::convertFloatToStringWithUnit(float value, char* unitOfMeasure) {
+	char buff[10];
+	dtostrf(value, 4, 6, buff);
+	char* result = strcat(buff, unitOfMeasure);
+	return result;
 }
 
-string Caliper::decode()
+char* Caliper::decode()
 {
-    int bitArray[25];
-    int sign = 1;
-    float result = 0.0;
+	int bitArray[25];
+	int sign = 1;
+	float result = 0.0;
 
-    readBitArray(bitArray);
+	readBitArray(bitArray);
 
-    auto decimalValue = convertBinaryToDecimal(bitArray);
+	auto decimalValue = convertBinaryToDecimal(bitArray);
 
-    auto isNegativeSign = bitArray[21] == 1;
+	auto isNegativeSign = bitArray[21] == 1;
 
-    if (isNegativeSign)
-        sign = -1;
+	if (isNegativeSign)
+		sign = -1;
 
-    string unitOfMeasure = " mm";
+	char* unitOfMeasure = " mm";
 
-    auto isValueInInches = bitArray[24] == 1;
+	auto isValueInInches = bitArray[24] == 1;
 
-    if (isValueInInches)
-    {
-        unitOfMeasure = " in";
-        result = (decimalValue * sign) / 2000.00;
-    }
-    else
-    {
-        result = (decimalValue * sign) / 100.00;
-    }
+	if (isValueInInches)
+	{
+		unitOfMeasure = " in";
+		result = (decimalValue * sign) / 2000.00;
+	}
+	else
+	{
+		result = (decimalValue * sign) / 100.00;
+	}
 
-    auto valueString = convertFloatToStringWithUnit(result, unitOfMeasure);
+	auto valueString = convertFloatToStringWithUnit(result, unitOfMeasure);
 
-    return valueString;
+	return valueString;
 }
 
-string Caliper::getCurrentMeasurement()
+char* Caliper::getCurrentMeasurement()
 {
-    string currentMeasurement = "";
-    auto readPulseTime = getReadPulseTime();
+	char* currentMeasurement = "";
+	auto readPulseTime = getReadPulseTime();
 
-    auto newBitSequenceStarted = readPulseTime > READ_TIME;
-    if (newBitSequenceStarted)
-        currentMeasurement = decode();
+	auto newBitSequenceStarted = readPulseTime > READ_TIME;
+	if (newBitSequenceStarted)
+		currentMeasurement = decode();
 
-    return currentMeasurement;
+	return currentMeasurement;
 }
 
 Caliper caliper;
