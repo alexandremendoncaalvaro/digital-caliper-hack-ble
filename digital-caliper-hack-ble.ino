@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "BLE.h"
+#include "Caliper.h"
 
 void setup(){
     Serial.begin(BAUDRATE_SERIAL);
@@ -11,4 +12,5 @@ void loop(){
     auto value = caliper.getCurrentMeasurement();
     ble.sendData(value);
     Serial.println(value);
+    delay(1000);
 }

@@ -32,6 +32,7 @@ void Caliper::readBitArray(int bitArray[])
         waitForClockSignal(HIGH);
     }
 }
+
 float Caliper::convertBinaryToDecimal(int bitArray[])
 {
     float value = 0.0;
