@@ -1,10 +1,12 @@
-Caliper::begin()
+#include "Caliper.h"
+
+void Caliper::begin()
 {
     pinMode(PIN_DATA, INPUT);
     pinMode(PIN_CLOCK, INPUT);
 }
 
-Caliper::waitForClockSignal(int signal)
+void Caliper::waitForClockSignal(int signal)
 {
     while (digitalRead(PIN_CLOCK) == signal)
     {
@@ -22,13 +24,13 @@ unsigned long Caliper::getReadPulseTime()
 void Caliper::readBitArray(int bitArray[])
 {
     int bitIndex = 0;
-    bitArray[bitIndex] = digitalRead(DATA_PIN);
+    bitArray[bitIndex] = digitalRead(PIN_DATA);
 
     waitForClockSignal(HIGH);
     for (bitIndex = 1; bitIndex <= 24; bitIndex++)
     {
         waitForClockSignal(LOW);
-        bitArray[bitIndex] = digitalRead(DATA_PIN);
+        bitArray[bitIndex] = digitalRead(PIN_DATA);
         waitForClockSignal(HIGH);
     }
 }
@@ -45,8 +47,11 @@ float Caliper::convertBinaryToDecimal(int bitArray[])
 
 string Caliper::convertFloatToStringWithUnit(float value, string unitOfMeasure){
     char buff[10];
-    dtostrf(result, 4, 6, buff);
-    return buff + unitOfMeasure;
+    dtostrf(value, 4, 6, buff);
+
+    string result = buff;
+    result += unitOfMeasure;
+    return result;
 }
 
 string Caliper::decode()
@@ -71,11 +76,11 @@ string Caliper::decode()
     if (isValueInInches)
     {
         unitOfMeasure = " in";
-        result = (value * sign) / 2000.00;
+        result = (decimalValue * sign) / 2000.00;
     }
     else
     {
-        result = (value * sign) / 100.00;
+        result = (decimalValue * sign) / 100.00;
     }
 
     auto valueString = convertFloatToStringWithUnit(result, unitOfMeasure);

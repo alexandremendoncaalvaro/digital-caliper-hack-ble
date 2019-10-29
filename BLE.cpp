@@ -1,9 +1,11 @@
-BLE::begin()
+#include "BLE.h"
+
+void BLE::begin()
 {
     bleSerial.begin(BLE_BAUDRATE);
 }
 
-BLE::sendData(char[] message){
+void BLE::sendData(string message){
     bleSerial.println(message);
 }
 

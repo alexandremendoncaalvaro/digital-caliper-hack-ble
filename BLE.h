@@ -13,7 +13,7 @@ private:
     SoftwareSerial bleSerial = SoftwareSerial(BLE_PIN_RX, BLE_PIN_TX);
 public:
     void begin();
-    void sendData(char[] message);
+    void sendData(string message);
 };
 
 extern BLE ble;

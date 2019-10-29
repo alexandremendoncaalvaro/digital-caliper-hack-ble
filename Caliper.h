@@ -13,6 +13,7 @@ private:
     unsigned long getReadPulseTime();
     void readBitArray(int bitArray[]);
     float convertBinaryToDecimal(int bitArray[]);
+    string convertFloatToStringWithUnit(float value, string unitOfMeasure);
     string decode();
     
 public:
