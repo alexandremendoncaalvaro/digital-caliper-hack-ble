@@ -5,14 +5,14 @@
 class Caliper
 {
 private:
-	const uint8_t PIN_DATA = 2;
-	const uint8_t PIN_CLOCK = 3;
+	const uint8_t PIN_CLOCK = 2;
+	const uint8_t PIN_DATA = 3;
 	const unsigned long READ_TIME = 500;
 
-	void waitForClockSignal(int signal);
-	unsigned long getReadPulseTime();
-	void readBitArray(int bitArray[]);
-	float convertBinaryToDecimal(int bitArray[]);
+	void waitChangeClockSignalFrom(int signal);
+	unsigned long getStartReadPulseTime();
+	// long readRawDataFromBits();
+	// float convertBinaryToDecimal(int bitArray[]);
 	char* convertFloatToStringWithUnit(float value, char* unitOfMeasure);
 	char* decode();
 

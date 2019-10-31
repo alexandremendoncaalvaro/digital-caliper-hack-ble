@@ -4,13 +4,12 @@
 
 void setup(){
     Serial.begin(BAUDRATE_SERIAL);
-    ble.begin();
+    Serial.println("Serial Started!");
     caliper.begin();
 }
 
 void loop(){
     auto value = caliper.getCurrentMeasurement();
-    ble.sendData(value);
     Serial.println(value);
     delay(1000);
 }
